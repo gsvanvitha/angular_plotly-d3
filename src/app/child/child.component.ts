@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, ɵgetDebugNode__POST_R3__ } f
 import * as Plotly from 'plotly.js-dist';
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import * as d3 from 'd3';
+import { Options, LabelType } from '@angular-slider/ngx-slider';
 
 @Component({
   selector: 'app-child',
@@ -10,11 +11,38 @@ import * as d3 from 'd3';
 })
 
 export class ChildComponent implements OnInit {
-
+   data=[];
+   layout:any;
+   scroll = true;
+   mindate;
+   maxdate;
   @ViewChild('plot',{static:true}) ele:ElementRef;
   @ViewChild('plot1',{static:true}) myPlot1:ElementRef;
   
+  dateRange: Date[] = this.customDateRange();
+  value: number = this.dateRange[0].getTime();
+  minValue: number = this.dateRange[0].getTime();
+  maxValue: number = this.dateRange[1].getTime();
+
   constructor() { }
+
+  options: Options = {
+    stepsArray: this.dateRange.map((date: Date) => {
+      return { value: date.getTime() };
+    }),
+    translate: (value: number, label: LabelType): string => {
+      return new Date(value).toDateString();
+    }
+  };
+
+  customDateRange(): Date[] {
+    const dates: Date[] = [];
+    for (let i: number = 1; i <= 31; i++) {
+      dates.push(new Date(2015, 6, i));
+    }
+    return dates;
+  }
+ 
   ngAfterContentInit(){
     var subject = ['Moe','Lay','Curly','Moe','Lay','Curly','Moe','Lay','Curly','Moe','Lay','Curly']
     var score = [1,6,2,8,2,9,4,5,1,5,2,8]
@@ -37,16 +65,17 @@ export class ChildComponent implements OnInit {
           {target: 'y', func: 'max', enabled: true},
         ]
       }],
-      text:'aggregate-value-max',
-      hovermode: 'closest+y',
+      //text:'aggregate-value-max',
+
      
      //  hovertemplate:'<ng-template> Hey</ng-template>',
-       hovertemplate:'<p><i>Hey</i></p>',
+     //  hovertemplate:'<p><i>Hey</i></p>',
     
      
       line : {dash:'dot', width:1},
     }]
     var layout3={
+      hovermode:'x unified',
       yaxis: {
         range: [0,10],
         linecolor: 'grey',
@@ -64,45 +93,145 @@ export class ChildComponent implements OnInit {
         gridcolor: 'grey',
         gridwidth: '3'
       },
-      hoverdistance: 400
+      
+      hoverlabel:{
+        bgcolor: 'black',
+        font:{
+          color: 'yellow'
+        } 
+      }
     }
     
     Plotly.newPlot('myDiv1', data2, layout3);
-    console.log('div4');
+    
     var myPlot2 = document.getElementById('myDiv4'),
     hoverInfo = document.getElementById('hoverinfo'),
     N = 16,
     x = d3.range(N),
     y1 = d3.range(N).map( d3.randomNormal() ),
     y2 = d3.range(N).map( d3.randomNormal() ),
-    data = [ { x:x, y:y1, type:'scatter', name:'Trial 1',
-        mode:'markers', marker:{size:16} },
-        { x:x, y:y2, type:'scatter', name:'Trial 2',
-        mode:'markers', marker:{size:16} } ];
-    var layout = {
-      hoverlabel: {
-        angle: 180 // or [10, 90, 45] one item per-pt
+    // x = [0,1,2,3,4,5],
+    // y1 = [0,1,2,3,4,5],
+    // y2 = [1,2,3,4,5,6],
+     trace1= { x:x, y:y1, type:'scatter',
+        mode:'lines+markers', marker:{size:6}, hovertemplate: 'x: %{x} <br>y: %{y} <extra></extra>' },
+       trace2=  { x:x, y:y2, type:'scatter', 
+        mode:'lines+markers', marker:{size:6},hovertemplate: 'x: %{x} <br>y: %{y} <extra></extra>' };
+      this.data = [trace1,trace2,],
+      this.layout = {
+      showlegend: false,
+      xaxis:{
+        range: [-3,7],
       },
-        hovermode:'x',
-        title:'Hover on Points',
-       
-       
+
+        hovermode:'closest',
+        hoverlabel:{
+         bgcolor: 'black',
+         font:{
+          color: 'white'
+        },
+        bordercolor: 'yellow'
+       },
+        hoverdistance: 200,
+
+       title:'Hover on Points',
      };
+     
 
-Plotly.newPlot('myDiv4', data, layout);
+Plotly.newPlot('myDiv4', this.data, this.layout,{scrollZoom:true, responsive: true});
 this.myPlot1.nativeElement = myPlot2;
-this.myPlot1.nativeElement.on('plotly_hover', function(data){
-    var infotext = data.points.map(function(d){
-      return (d.data.name+': x= '+d.x+', y= '+d.y.toPrecision(3));
-    });
+// this.myPlot1.nativeElement.on('plotly_hover', function(data){
+//     var infotext = data.points.map(function(d){
+//       return (d.data.name+': x= '+d.x+', y= '+d.y.toPrecision(3));
+//     });
 
-    hoverInfo.innerHTML = infotext.join('<br/>');
-})
- .on('plotly_unhover', function(data){
-    hoverInfo.innerHTML = '';
-});
+//     hoverInfo.innerHTML = infotext.join('<br/>');
+// })
+//  .on('plotly_unhover', function(data){
+//     hoverInfo.innerHTML = '';
+// });
+
     
   }
+
+  scrollZoom(){
+    this.scroll=!this.scroll;
+    Plotly.react('myDiv4',this.data,this.layout,{scrollZoom:this.scroll})
+    }
+  panButton(){
+    var update = {
+      'dragmode': 'pan', 
+  };
+  Plotly.relayout('myDiv4', update)
+  }
+  zoomButton(){
+    var update = {
+      title: 'some new title',
+      'dragmode': 'zoom',  
+  };
+
+  Plotly.relayout('myDiv4', update)
+  }
+  autoscaleButton(){
+    var update = {
+     'xaxis.autorange': true,
+     'yaxis.autorange': true, 
+  };
+  Plotly.relayout('myDiv4', update)
+  }
+
+  resetAxesButton(){
+    var update = {
+      title: 'some new title', 
+    'xaxis.range': [-3,7],
+    'yaxis.range': [-3,7]    
+  };
+
+  Plotly.relayout('myDiv4', update)
+  }
+ 
+  onClickSubmit(data) {
+    var update = {
+      title: 'some new title',
+      'xaxis.range': [data.min,data.max]
+  };
+
+  Plotly.relayout('myDiv4', update)
+ }
+ showTrace(data){
+  var update = {
+    visible: true
+  }
+  var update1 = {
+    visible: false
+  }
+  if(data=='none'){
+    Plotly.restyle('myDiv4',update1)
+  }
+   if(data=='1'){
+     Plotly.restyle('myDiv4',update,0)
+     Plotly.restyle('myDiv4',update1,[1])
+   }
+   if(data=='2'){
+    Plotly.restyle('myDiv4',update,[1]),
+    Plotly.restyle('myDiv4',update1,0)
+  }
+  if(data=='12'){
+    Plotly.restyle('myDiv4',update)
+  }
+ };
+ change3(data){
+  this.mindate=new Date(data.value).toISOString().slice(0,10); 
+  this.maxdate=new Date(data.highValue).toISOString().slice(0,10);
+  console.log(this.mindate);
+  console.log(this.maxdate);
+  var update = {
+    'xaxis.range':[this.mindate,this.maxdate]
+  }
+  Plotly.relayout(this.ele.nativeElement,update);
+  Plotly.relayout('rangeSliderPlot',update);
+}
+
   ngOnInit(): void {
     //basic plot
    // Plotly.newPlot(this.ele.nativeElement,[{x:[1,2,3],y:[1,2,3], type: 'scatter'}]);
@@ -133,7 +262,6 @@ this.myPlot1.nativeElement.on('plotly_hover', function(data){
     var layout = {
       title: 'Time Series & Selection',
       xaxis: {
-        autorange: true,
         range: ['2015-02-17', '2017-02-16'],
         rangeselector: {buttons: [
           {
@@ -167,16 +295,14 @@ this.myPlot1.nativeElement.on('plotly_hover', function(data){
           },
           {step: 'all'}
         ],
-      direction: 'down',
       pad: {'r': 10, 't': 10},
       showactive: true,
-      type: 'dropdown',
       x: 1,
       xanchor: 'top',
       y: 1,
       yanchor: 'bottom',
       font: {color: 'red'}},
-        rangeslider: {range: ['2015-02-17', '2017-02-16']},
+        rangeslider: {range: ['2015-02-17', '2017-02-16']},//, bordercolor: 'blue', borderwidth: 3, bgcolor: 'grey', thickness: 0.75},
         type: 'date'
       },
       yaxis: {
@@ -187,7 +313,7 @@ this.myPlot1.nativeElement.on('plotly_hover', function(data){
     };
 
     Plotly.newPlot(this.ele.nativeElement, data, layout);
-
+    Plotly.newPlot('rangeSliderPlot', data, layout);
     }); 
 
     var valuesy1=[1, 6, 3, 6, 1];
@@ -235,6 +361,8 @@ this.myPlot1.nativeElement.on('plotly_hover', function(data){
     //mutliple y-axis 
     
     var layout = {
+      hovermode:'x unified',
+      dragmode: 'zoom',
       xaxis: {
         range: [ 0.75, 5.25 ],
         zeroline: false
@@ -290,7 +418,7 @@ this.myPlot1.nativeElement.on('plotly_hover', function(data){
         }
         ]
     };
-    Plotly.newPlot('myDiv', data, layout,  {staticPlot:true,editable:false, scrollZoom:true,displayModeBar:false, responsive:true}  );
+    Plotly.newPlot('myDiv', data, layout,  {staticPlot:false,editable:false,scrollZoom:false,displayModeBar:false,responsive:true}  );
 
 var interval = setTimeout(function() {
   console.log('entered');

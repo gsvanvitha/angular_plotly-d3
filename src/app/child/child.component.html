@@ -1,3 +1,7 @@
+<div id="rangeSliderPlot" ></div>
+<ngx-slider [(value)]="minValue" [(highValue)]="maxValue" [options]="options"
+(userChange)="change3($event)"></ngx-slider>
+<div id="slider-range"></div>
 <p>child works!</p>
 <div #plot></div>
 <div #plot1></div>
@@ -6,5 +10,24 @@
 <div id="myDiv" ></div>
 <div id="plotLayout" ></div>
 <div id="myDiv4" ></div>
+<button (click)="panButton()">Pan</button>
+<button (click)="zoomButton()">Zoom</button>
+<button (click)="autoscaleButton()">Auto Scale</button>
+<button (click)="resetAxesButton()">Reset Axes</button>
+<button (click)="scrollZoom()">Scroll Zoom</button>
+<form #range = "ngForm" (ngSubmit) = "onClickSubmit(range.value)" >
+    <input type = "text" name = "min"  ngModel> min
+    <br/>
+    <input type = "text" name = "max"  ngModel> max
+    <br/>
+    <input type = "submit" value = "submit">
+ </form>
+ <select #select (change)="showTrace(select.value)">
+    <option value ="12">Trace 1 and 2</option>
+    <option value ="1">Trace 1</option>
+    <option value ="2">Trace 2</option>
+    <option value ="none">None</option>
+    </select>
 <div id="hoverinfo" style="margin-left:80px;"></div>
+
 

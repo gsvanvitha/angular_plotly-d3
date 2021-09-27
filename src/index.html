@@ -6,8 +6,35 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- <title>jQuery UI Slider - Default functionality</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+      $(function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: new Date('2010.01.01').getTime() / 1000,
+      max: new Date('2014.01.01').getTime() / 1000,
+      step: 86400,
+      values: [ new Date('2013.01.01').getTime() / 1000, new Date('2013.02.01').getTime() / 1000 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
+      }
+    });
+    $( "#amount" ).val( (new Date($( "#slider-range" ).slider( "values", 0 )*1000).toDateString()) +
+      " - " + (new Date($( "#slider-range" ).slider( "values", 1 )*1000)).toDateString());
+  });
+  </script> -->
 </head>
 <body>
+  <!-- <p>
+    <label for="amount">Date range:</label>
+    <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" size="100"/>
+  </p>
+   
+  <div id="slider-range"></div> -->
   <app-root></app-root>
 </body>
 </html>
