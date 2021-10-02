@@ -1,0 +1,13 @@
+<div id="cursorPlot"></div>
+<button (click)="addCursor1()">Add Cursor1</button>
+<button (click)="addCursor2()">Add Cursor2</button>
+<button (click)="cursorLeft()">Left</button>
+<button (click)="cursorRight()">Right</button>
+<br>
+<p>Active Cursor</p>
+<select #select (change)="cursorStatus(select.value)">
+    <option value ="both">Cursor 1 and 2</option>
+    <option value ="1">Cursor 1</option>
+    <option value ="2">Cursor 2</option>
+    <option value ="none">None</option>
+    </select>

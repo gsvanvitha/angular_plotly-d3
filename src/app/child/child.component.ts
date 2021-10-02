@@ -232,6 +232,7 @@ this.myPlot1.nativeElement = myPlot2;
   Plotly.relayout('rangeSliderPlot',update);
 }
 
+
   ngOnInit(): void {
     //basic plot
    // Plotly.newPlot(this.ele.nativeElement,[{x:[1,2,3],y:[1,2,3], type: 'scatter'}]);
@@ -247,8 +248,9 @@ this.myPlot1.nativeElement = myPlot2;
       x: unpack(rows, 'Date'),
       y: unpack(rows, 'AAPL.High'),
       line: {color: '#17BECF'}
+      
     }
-
+  
     var trace2 = {
       type: "scatter",
       mode: "lines",
@@ -314,6 +316,7 @@ this.myPlot1.nativeElement = myPlot2;
 
     Plotly.newPlot(this.ele.nativeElement, data, layout);
     Plotly.newPlot('rangeSliderPlot', data, layout);
+    console.log("trace"+trace1.x);
     }); 
 
     var valuesy1=[1, 6, 3, 6, 1];
@@ -518,8 +521,10 @@ var interval = setTimeout(function() {
       hovermode: 'y+closest'
     };
     Plotly.newPlot('myPlot', data1, layout1);
+    
  
   }
+  
 
 
 }
