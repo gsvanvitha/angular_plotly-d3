@@ -3,13 +3,19 @@
 <button (click)="addCursor2()">Add Cursor2</button>
 <button (click)="cursorLeft()">Left</button>
 <button (click)="cursorRight()">Right</button>
-<br>
+<br />
 <p>Active Cursor</p>
 <select #select (change)="cursorStatus(select.value)">
-    <option value ="both">Cursor 1 and 2</option>
-    <option value ="1">Cursor 1</option>
-    <option value ="2">Cursor 2</option>
-    <option value ="none">None</option>
-    </select>
-<div id="boxCursor1" style="background-color:transparent;width:20px;height:20px"></div>
-<div id="boxCursor2" style="background-color:transparent;width:20px;height:20px"></div>
+  <option value="both">Cursor 1 and 2</option>
+  <option value="1">Cursor 1</option>
+  <option value="2">Cursor 2</option>
+  <option value="none">None</option>
+</select>
+<div
+  id="boxCursor1"
+  style="background-color: transparent; width: 20px; height: 20px"
+></div>
+<div
+  id="boxCursor2"
+  style="background-color: transparent; width: 20px; height: 20px"
+></div>

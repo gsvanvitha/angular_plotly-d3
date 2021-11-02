@@ -6,20 +6,18 @@ import { ChildComponent } from './child/child.component';
 import { LayoutComponent } from './layout/layout.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { CursorComponent } from './cursor/cursor.component';
+import { SynccursorComponent } from './synccursor/synccursor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChildComponent,
     LayoutComponent,
-    CursorComponent
+    CursorComponent,
+    SynccursorComponent,
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    NgxSliderModule
-  ],
+  imports: [BrowserModule, FormsModule, NgxSliderModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
