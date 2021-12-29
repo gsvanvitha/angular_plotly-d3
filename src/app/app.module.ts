@@ -7,6 +7,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { CursorComponent } from './cursor/cursor.component';
 import { SynccursorComponent } from './synccursor/synccursor.component';
+import { LocalizationComponent } from './localization/localization.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { SynccursorComponent } from './synccursor/synccursor.component';
     LayoutComponent,
     CursorComponent,
     SynccursorComponent,
+    LocalizationComponent,
   ],
   imports: [BrowserModule, FormsModule, NgxSliderModule],
   providers: [],

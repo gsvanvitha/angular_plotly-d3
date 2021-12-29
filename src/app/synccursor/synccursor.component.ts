@@ -5,7 +5,9 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import * as Plotly from 'plotly.js-dist';
+import locale from 'plotly.js-locales/index';
+// import * as Plotly from 'plotly.js-dist';
+import * as Plotly from 'plotly.js-basic-dist';
 export enum KEY_CODE {
   RIGHT_ARROW = 39,
   LEFT_ARROW = 37,
@@ -28,9 +30,42 @@ export class SynccursorComponent implements OnInit {
   public index;
   public moveCursor = false;
   @ViewChild('syncCursorPlot', { static: true }) syncCursorPlot: ElementRef;
-  constructor() {}
+
+  languages = [
+    'en-US',
+
+    'de',
+
+    'es',
+
+    'fi',
+
+    'fr',
+
+    'it',
+
+    'ja',
+
+    'ko',
+
+    'pt-pt',
+
+    'ru',
+
+    'zh-cn',
+  ];
+
+  langIndex = 0;
+  constructor() {
+    Plotly.register(locale['fr']);
+    Plotly.setPlotConfig({ locale: 'fr' });
+  }
 
   ngOnInit(): void {
+    const speedunits = 'rpm';
+    const arr = [1, 2, 3, 4, 5];
+    const val1 = ['a', 'b', 'c', 'd', 'e'];
+    const val2 = ['A', 'B', 'C', 'D', 'E'];
     this.trace1 = {
       x: [1, 2, 3, 4, 5],
       y: [1, 3, 2, 6, 1],
@@ -39,6 +74,7 @@ export class SynccursorComponent implements OnInit {
         width: 1,
       },
       // hoverinfo: 'none',
+      hovertemplate: 'y=%{y}<extra></extra>',
     };
     this.trace2 = {
       x: [1, 2, 3, 4, 5],
@@ -47,16 +83,29 @@ export class SynccursorComponent implements OnInit {
       line: {
         width: 1,
       },
+      text: [
+        [1, 'A', 'a'],
+        [2, 'B', 'b'],
+        [3, 'C', 'c'],
+        [4, '', 'd'],
+        [5, 'E', ''],
+      ],
       //  hoverinfo: 'none',
+      hovertemplate:
+        'y=%{y},num=%{text[0]},val1=%{text[1]},val2=%{text[2]},<extra></extra>',
     };
+    const title = 'TITLE';
     this.trace3 = {
+      name: 'TEST',
       x: [1, 2, 3, 4, 5],
       y: [11, 13, 12, 13, 11],
       mode: 'lines',
       line: {
         width: 1,
       },
-      //  hoverinfo: 'none',
+      text: arr,
+      // hovertemplate: 'y=%{y},val1=%{text}<extra></extra>',
+      hovertemplate: '%{y}' + title + '@%{text}<extra></extra>' + speedunits,
     };
     this.trace4 = {
       x: [1, 2, 3, 4, 5],
@@ -65,6 +114,7 @@ export class SynccursorComponent implements OnInit {
       line: {
         width: 1,
       },
+      hovertemplate: 'y=%{y}<extra></extra>',
       // hoverinfo: 'none',
     };
     // this.trace5 = {
@@ -108,7 +158,7 @@ export class SynccursorComponent implements OnInit {
         autorange: false,
       },
       //showlegend: false,
-      hovermode: 'x unified',
+      hovermode: 'x',
       //dragmode: false,
     };
     Plotly.newPlot(this.syncCursorPlot.nativeElement, this.data, this.layout);
@@ -178,12 +228,23 @@ export class SynccursorComponent implements OnInit {
       else el.style.display = 'block';
     }
   }
+  changeLanguage(event) {
+    if (this.index > 0) {
+      Plotly.register(locale[this.languages[this.index]]);
+    }
 
+    var x = Plotly.newPlot(this.syncCursorPlot.nativeElement, this.data, [], {
+      locale: this.languages[this.index],
+    });
+
+    if (this.index < this.languages.length - 1) this.index = this.index + 1;
+    else this.index = 0;
+  }
   ngAfterViewInit() {
     this.divCursor(this.trace.length);
     var click = false;
     this.syncCursorPlot.nativeElement.on('plotly_hover', (data) => {
-      // console.log(data);
+      console.log(data);
       if (this.moveCursor == true) {
         if (data.points[this.trace.length] != null) {
           //dummytrace is excluded
@@ -191,6 +252,9 @@ export class SynccursorComponent implements OnInit {
           this.dragCursor(data.points[0].pointIndex);
         }
       }
+    });
+    this.syncCursorPlot.nativeElement.on('plotly_click', (data) => {
+      console.log(data);
     });
     this.syncCursorPlot.nativeElement.on('plotly_relayout', (data) => {
       // create an empty array

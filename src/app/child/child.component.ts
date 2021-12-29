@@ -1,12 +1,14 @@
 import {
   Component,
   ElementRef,
+  Inject,
   OnInit,
   ViewChild,
   ɵgetDebugNode__POST_R3__,
 } from '@angular/core';
 import * as Plotly from 'plotly.js-dist';
-import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+
+import locale from 'plotly.js-locales/index';
 import * as d3 from 'd3';
 import { Options, LabelType } from '@angular-slider/ngx-slider';
 
@@ -31,8 +33,14 @@ export class ChildComponent implements OnInit {
   value: number = this.dateRange[0].getTime();
   minValue: number = this.dateRange[0].getTime();
   maxValue: number = this.dateRange[1].getTime();
+  languages: string[];
+  index: number;
 
-  constructor() {}
+  constructor() {
+    Plotly.register(locale['fr']);
+
+    Plotly.setPlotConfig({ locale: 'fr' });
+  }
 
   options: Options = {
     stepsArray: this.dateRange.map((date: Date) => {
@@ -126,7 +134,19 @@ export class ChildComponent implements OnInit {
     };
 
     Plotly.newPlot('myDiv1', data2, layout3);
-
+    const map = {
+      de: 'de',
+      en: 'en',
+      es: 'es',
+      fi: 'fi',
+      fr: 'fr',
+      it: 'it',
+      jp: 'ja',
+      kr: 'ko',
+      pt: 'pt-pt',
+      ru: 'ru',
+      zh: 'zh-cn',
+    };
     var myPlot2 = document.getElementById('myDiv4'),
       hoverInfo = document.getElementById('hoverinfo'),
       N = 16,
@@ -280,7 +300,7 @@ export class ChildComponent implements OnInit {
     ).then((rows) => {
       // console.log(rows);
       function unpack(rows, key) {
-        console.log(rows);
+        //  console.log(rows);
         return rows.map(function (row) {
           return row[key];
         });
@@ -288,19 +308,19 @@ export class ChildComponent implements OnInit {
       var trace1 = {
         type: 'scatter',
         mode: 'lines+markers',
-        name: 'AAPL High',
         x: unpack(rows, 'Date'),
         y: unpack(rows, 'AAPL.High'),
         line: { color: '#17BECF' },
+        hovertemplate: '%{x} series<extra></extra>',
       };
 
       var trace2 = {
         type: 'scatter',
         mode: 'lines',
-        name: 'AAPL Low',
         x: unpack(rows, 'Date'),
         y: unpack(rows, 'AAPL.Low'),
         line: { color: '#7F7F7F' },
+        hovertemplate: '%{x} series<extra></extra>',
       };
 
       var data = [trace1, trace2];
@@ -361,7 +381,55 @@ export class ChildComponent implements OnInit {
         },
       };
 
-      Plotly.newPlot(this.ele.nativeElement, data, layout);
+      this.languages = [
+        'en-US',
+
+        'de',
+
+        'es',
+
+        'fi',
+
+        'fr',
+
+        'it',
+
+        'ja',
+
+        'ko',
+
+        'pt-pt',
+
+        'ru',
+
+        'zh-cn',
+      ];
+
+      this.index = 0;
+      Plotly.newPlot(this.ele.nativeElement, data, layout, {
+        modeBarButtonsToAdd: [
+          'v1hovermode',
+          {
+            name: 'CustomButton',
+            icon: Plotly.Icons.pencil,
+            click: (gd) => {
+              if (this.index > 0) {
+                Plotly.register(locale[this.languages[this.index]]);
+              }
+              // Plotly.setPlotConfig({
+              //   locale: this.languages[this.index],
+              // });
+              Plotly.newPlot(this.ele.nativeElement, data, layout, {
+                locale: this.languages[this.index],
+              });
+
+              if (this.index < this.languages.length - 1)
+                this.index = this.index + 1;
+              else this.index = 0;
+            },
+          },
+        ],
+      });
       Plotly.newPlot('rangeSliderPlot', data, layout);
 
       // console.log('trace' + trace1.x);
